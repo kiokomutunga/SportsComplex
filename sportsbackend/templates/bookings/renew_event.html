@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Review Event: {{ event.name }}</h2>
+<p><strong>Submitted by:</strong> {{ event.created_by.username }}</p>
+<p><strong>Description:</strong> {{ event.description }}</p>
+<p><strong>Date:</strong> {{ event.date }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Decision</button>
+</form>
+<a href="{% url 'pending_events' %}">Back to Pending</a>
+{% endblock %}
