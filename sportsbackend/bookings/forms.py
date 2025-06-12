@@ -1,5 +1,8 @@
 from django import forms
 from .models import Event
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 class EventBookingForm(forms.ModelForm):
     class Meta:
         model = Event
@@ -17,3 +20,10 @@ class EventApprovalForm(forms.ModelForm):
             if status == 'REJECTED' and not reason:
                 self.add_error('rejection_reason', 'rejection reason is required when rejecting')
             return cleaned_data
+
+class UserRegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
