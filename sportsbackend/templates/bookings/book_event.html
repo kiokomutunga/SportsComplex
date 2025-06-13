@@ -1,0 +1,11 @@
+<!-- templates/bookings/book_event.html -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Book an Event</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Booking</button>
+  </form>
+{% endblock %}

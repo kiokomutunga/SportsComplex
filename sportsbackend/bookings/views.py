@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect , get_list_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Event
-from .forms import EventBookingForm ,EventApprovalForm, EmailOrUsernameAuthenticationForm
+from .forms import EventBookingForm ,EventApprovalForm
 from django.contrib.auth import login
 from .forms import UserRegisterForm
-from .forms import EmailLoginForm
 from django.contrib.auth import login as auth_login
+from .forms import CustomLoginForm
+from django.contrib.auth import authenticate, login
 
 #recognize the admin
 
@@ -57,24 +58,27 @@ def register_view(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Auto login after registration
-            return redirect('user_dashboard')  # or your preferred view
+            login(request, user,  backend='bookings.backends.EmailOrUsernameBackend')
+            return redirect('user_dashboard')
     else:
         form = UserRegisterForm()
     return render(request, 'registration/register.html', {'form': form})
 
 def login_view(request):
-    form = EmailLoginForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            user = form.cleaned_data['user']
-            auth_login(request, user)
+    form = CustomLoginForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        identifier = form.cleaned_data['identifier']
+        password = form.cleaned_data['password']
+        user = authenticate(request, username=identifier, password=password)
+        if user:
+            login(request, user)
             return redirect('user_dashboard')
+        else:
+            form.add_error(None, "Invalid credentials")
     return render(request, 'registration/login.html', {'form': form})
 
-def custom_login_view(request):
-    form = EmailOrUsernameAuthenticationForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        login(request, form.user)
-        return redirect('user_dashboard')
-    return render(request, 'registration/login.html', {'form': form})
+@login_required
+def user_dashboard(request):
+    events = Event.objects.all()
+    return render(request, 'bookings/userdashboard.html', {'events': events})
+
