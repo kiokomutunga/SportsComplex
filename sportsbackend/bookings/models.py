@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+class CustomUser(AbstractUser):
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
 
 class Event(models.Model):
     STATUS_CHOICES = [
@@ -17,3 +21,6 @@ class Event(models.Model):
 
     def __str__(self):                        
         return f"{self.name} ({self.status})"
+
+class CustomUser(AbstractUser):
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
