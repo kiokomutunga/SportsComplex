@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-
 {% block content %}
   <h2>Login</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
-    <p>{{ form.email_or_username.label_tag }} {{ form.email_or_username }}</p>
+    <p>{{ form.identifier.label_tag }} {{ form.identifier }}</p>
     <p>{{ form.password.label_tag }} {{ form.password }}</p>
     <button type="submit">Login</button>
   </form>
