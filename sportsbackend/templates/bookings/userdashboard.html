@@ -1,20 +1,23 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2>Your Event Bookings</h2>
-<table>
-    <tr>
-        <th>Name</th><th>Date</th><th>Status</th><th>Reason</th>
-    </tr>
-    {% for event in events %}
-    <tr>
-        <td>{{ event.name }}</td>
-        <td>{{ event.date }}</td>
-        <td>{{ event.status }}</td>
-        <td>{{ event.rejection_reason|default:"-" }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="4">No bookings yet.</td></tr>
-    {% endfor %}
-</table>
-<a href="{% url 'book_event' %}">Book New Event</a>
-{% endblock %}
+<h2>My Events</h2>
+{% for event in user_events %}
+    <div>
+        <strong>{{ event.name }}</strong> - {{ event.date }}<br>
+        Status: {{ event.status }}
+        {% if event.status == "REJECTED" %}
+            <div style="color: red;">Reason: {{ event.rejection_reason }}</div>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>You have not booked any events.</p>
+{% endfor %}
+
+<hr>
+
+<h2>Other Approved Events</h2>
+{% for event in public_events %}
+    <div>
+        <strong>{{ event.name }}</strong> - {{ event.date }}
+    </div>
+{% empty %}
+    <p>No other approved events available.</p>
+{% endfor %}
