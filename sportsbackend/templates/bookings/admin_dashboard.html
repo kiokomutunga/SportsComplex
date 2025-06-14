@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Admin Dashboard</h1>
+
+  <h2>All Events</h2>
+  {% if all_events %}
+    {% for event in all_events %}
+      <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+        <h3>{{ event.name }}</h3>
+        <p><strong>Description:</strong> {{ event.description }}</p>
+        <p><strong>Date:</strong> {{ event.date }}</p>
+        <p><strong>Status:</strong> {{ event.status }}</p>
+        <p><strong>Created By:</strong> {{ event.created_by }}</p>
+        {% if event.status == 'PENDING' %}
+        <form method="post" action="{% url 'review_event' event.id %}">
+          {% csrf_token %}
+          <label>Status:</label>
+          <select name="status">
+            <option value="APPROVED">Approve</option>
+            <option value="REJECTED">Reject</option>
+          </select><br><br>
+
+          <label>Rejection Reason (if rejecting):</label><br>
+          <textarea name="rejection_reason" rows="2" cols="40">{{ event.rejection_reason }}</textarea><br><br>
+
+          <button type="submit">Submit</button>
+        </form>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No events found.</p>
+  {% endif %}
+
+  <hr>
+
+  <h2>Pending Events</h2>
+  {% if pending_events %}
+    <ul>
+      {% for event in pending_events %}
+        <li>{{ event.name }} - <a href="{% url 'review_event' event.id %}">Review</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No pending events.</p>
+  {% endif %}
+
+  <hr>
+
+  <h2>Rejected Events</h2>
+  {% if rejected_events %}
+    <ul>
+      {% for event in rejected_events %}
+        <li>{{ event.name }} - Reason: {{ event.rejection_reason }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No rejected events.</p>
+  {% endif %}
+
+  <h2><a href="{% url 'logout' %}">Logout</a></h2>
+
+{% endblock %}

@@ -40,12 +40,27 @@ def review_event(request, event_id):
     else:
         form = EventApprovalForm(instance=event)
     return render(request, 'bookings/review.html', {'form':form, 'event':event})
-#user dashboard
 
+#admin dashboard
+@login_required
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    events = Event.objects.filter(status='PENDING')
+    return render(request, 'bookings/admin_dashboard.html', {'events': events})
+
+#user dashboard
 @login_required
 def user_dashboard(request):
-    events = Event.objects.filter(all)
-    return render(request, 'bookings/user_dashboard.html', {'events':events})
+    # Events created by the logged-in user
+    user_events = Event.objects.filter(created_by=request.user)
+
+    # Approved events by other users
+    public_events = Event.objects.filter(status='APPROVED').exclude(created_by=request.user)
+
+    return render(request, 'bookings/user_dashboard.html', {
+        'user_events': user_events,
+        'public_events': public_events
+    })
 
 @login_required
 @user_passes_test(is_admin)
