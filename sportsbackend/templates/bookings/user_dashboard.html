@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <h2>My Events</h2>
 {% for event in user_events %}
     <div>
@@ -21,3 +23,4 @@
 {% empty %}
     <p>No other approved events available.</p>
 {% endfor %}
+{% endblock %}
