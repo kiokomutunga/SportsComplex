@@ -29,7 +29,7 @@ def book_event(request):
 
 #admin view all pending events
 @login_required
-@user_passes_test
+@user_passes_test(is_admin)
 def review_event(request, event_id):
     event = get_list_or_404(Event, id=event_id)
     if request.method == 'POST':
@@ -45,16 +45,19 @@ def review_event(request, event_id):
 @login_required
 @user_passes_test(is_admin)
 def admin_dashboard(request):
-    events = Event.objects.filter(status='PENDING')
-    return render(request, 'bookings/admin_dashboard.html', {'events': events})
-
+    all_events = Event.objects.all()
+    pending_events = Event.objects.filter(status='PENDING')
+    rejected_events = Event.objects.filter(status='REJECTED')
+    
+    return render(request, 'bookings/admin_dashboard.html', {
+        'all_events': all_events,
+        'pending_events': pending_events,
+        'rejected_events': rejected_events,
+    })
 #user dashboard
 @login_required
 def user_dashboard(request):
-    # Events created by the logged-in user
     user_events = Event.objects.filter(created_by=request.user)
-
-    # Approved events by other users
     public_events = Event.objects.filter(status='APPROVED').exclude(created_by=request.user)
 
     return render(request, 'bookings/user_dashboard.html', {
@@ -74,7 +77,10 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user,  backend='bookings.backends.EmailOrUsernameBackend')
-            return redirect('user_dashboard')
+            if user.is_staff:
+                return redirect('admin_dashboard')
+            else:          
+                return redirect('user_dashboard')
     else:
         form = UserRegisterForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -86,14 +92,18 @@ def login_view(request):
         password = form.cleaned_data['password']
         user = authenticate(request, username=identifier, password=password)
         if user:
+            print(f"Logged in as: {user.username}, is_staff: {user.is_staff}")
             login(request, user)
-            return redirect('user_dashboard')
+            if user.is_staff:
+                return redirect('admin_dashboard')
+            else:
+                return redirect('user_dashboard')
         else:
             form.add_error(None, "Invalid credentials")
     return render(request, 'registration/login.html', {'form': form})
 
 @login_required
-def user_dashboard(request):
-    events = Event.objects.all()
-    return render(request, 'bookings/userdashboard.html', {'events': events})
-
+def dashboard_redirect(request):
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+    return redirect('user_dashboard')
