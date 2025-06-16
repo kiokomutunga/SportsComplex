@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect , get_list_or_404
+from django.shortcuts import render, redirect , get_list_or_404, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Event
 from .forms import EventBookingForm ,EventApprovalForm
@@ -14,7 +14,6 @@ def is_admin(user):
     return user.is_staff
 
 #booking
-
 def book_event(request):
     if request.method == 'POST':
         form = EventBookingForm(request.POST)
@@ -31,7 +30,7 @@ def book_event(request):
 @login_required
 @user_passes_test(is_admin)
 def review_event(request, event_id):
-    event = get_list_or_404(Event, id=event_id)
+    event = get_object_or_404(Event, id=event_id)
     if request.method == 'POST':
         form = EventApprovalForm(request.POST, instance=event)
         if form.is_valid():
@@ -95,6 +94,7 @@ def login_view(request):
             print(f"Logged in as: {user.username}, is_staff: {user.is_staff}")
             login(request, user)
             if user.is_staff:
+                print(f"Logged in as: {user.username}, is_staff: {user.is_staff}")
                 return redirect('admin_dashboard')
             else:
                 return redirect('user_dashboard')
