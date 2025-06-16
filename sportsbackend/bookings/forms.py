@@ -14,7 +14,6 @@ class EventApprovalForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['status', 'rejection_reason']
-#admin clear logic
         def clean(self):
             cleaned_data = super().clean()
             status = cleaned_data.get("status")
