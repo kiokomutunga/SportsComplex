@@ -58,7 +58,9 @@
   {% else %}
     <p>No rejected events.</p>
   {% endif %}
-
-  <h2><a href="{% url 'logout' %}">Logout</a></h2>
+  <form method="POST" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
 
 {% endblock %}
