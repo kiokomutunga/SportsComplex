@@ -6,7 +6,7 @@ from django.contrib.auth import login
 from .forms import UserRegisterForm
 from django.contrib.auth import login as auth_login
 from .forms import CustomLoginForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 #recognize the admin
 
@@ -72,6 +72,7 @@ def pending_events(request):
 
 def register_view(request):
     if request.method == 'POST':
+        logout(request)
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
