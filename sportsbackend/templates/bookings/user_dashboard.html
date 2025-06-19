@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<a href="{% url 'book_event' %}" class="btn btn-primary">Book a New Event</a>
 <h2>My Events</h2>
 {% for event in user_events %}
     <div>
@@ -24,3 +25,5 @@
     <p>No other approved events available.</p>
 {% endfor %}
 {% endblock %}
+<a href="{% url 'book_event' %}" class="btn btn-primary">Book a New Event</a>
+

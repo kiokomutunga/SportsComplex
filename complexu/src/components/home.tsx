@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const App: React.FC = () => {
+const Homepage: React.FC = () => {
   const [activeView, setActiveView] = useState<'calendar' | 'list'>('list');
   const [activeEventType, setActiveEventType] = useState<string>('all');
   
@@ -738,4 +738,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default Homepage;

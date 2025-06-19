@@ -6,6 +6,7 @@ urlpatterns = [
     path('book/', views.book_event, name='book_event'),
     path('', views.dashboard_redirect, name='dashboard_redirect'),
     path('dashboard/', views.dashboard_redirect, name='dashboard_redirect'),
+    path('user/dashboard/', views.user_dashboard, name='user_dashboard'),
     path('staff/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('staff/pending/', views.pending_events, name='pending_events'),
     path('staff/review/<int:event_id>/', views.review_event, name='review_event'),

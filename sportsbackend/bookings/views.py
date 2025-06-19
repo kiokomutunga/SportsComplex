@@ -81,10 +81,11 @@ def register_view(request):
                 return redirect('admin_dashboard')
             else:          
                 return redirect('user_dashboard')
+        else:
+            print("Registration form errors:", form.errors)
     else:
         form = UserRegisterForm()
     return render(request, 'registration/register.html', {'form': form})
-
 def login_view(request):
     form = CustomLoginForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
